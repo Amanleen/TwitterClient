@@ -17,6 +17,7 @@
 
     <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
         <item name="android:background">@color/action_bar_color</item>
+
         <item name="background">@color/action_bar_color</item>
         <item name="android:titleTextStyle">@style/ActionBar.Text</item>
         <item name="titleTextStyle">@style/ActionBar.Text</item>
@@ -24,5 +25,14 @@
 
     <style name="ActionBar.Text" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title.Inverse">
         <item name="android:textColor">@color/action_bar_color1</item>
+    </style>
+
+    <style name="App.Dialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="actionBarStyle">@style/ActionBar</item>
+        <item name="windowFixedWidthMajor">80%</item>
+        <item name="windowFixedWidthMinor">80%</item>
+        <item name="windowFixedHeightMajor">80%</item>
+        <item name="windowFixedHeightMinor">80%</item>
     </style>
 </resources>

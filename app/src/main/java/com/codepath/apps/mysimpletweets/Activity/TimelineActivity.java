@@ -1,6 +1,7 @@
 package com.codepath.apps.mysimpletweets.Activity;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,11 +32,13 @@ public class TimelineActivity extends ActionBarActivity {
     private ArrayList<Tweet> tweets;
     private TweetsArrayAdapter aTweets;
     private ListView lvTweets;
-    private long start_index=0;
-    private long minIdSoFar =0;
+    private long start_index= 0;
+    private long minIdSoFar = -1;
+    private long maxIdSoFar = -1;
     private int count=25;
 
     private long lastQueryTime = -1;
+    SwipeRefreshLayout swipeContainer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +47,21 @@ public class TimelineActivity extends ActionBarActivity {
         getSupportActionBar().setIcon(R.drawable.ic_follow_text);
         //getSupportActionBar().setTitle("Twitter");
         getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+        swipeContainer = (SwipeRefreshLayout)findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                populateTimeline(true);
+            }
+        });
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
 
         lvTweets = (ListView)findViewById(R.id.lvTweets);
@@ -64,45 +82,61 @@ public class TimelineActivity extends ActionBarActivity {
                 if(totalItemCount!=0 && firstVisibleItem+visibleItemCount==totalItemCount){
 //                    Toast.makeText(TimelineActivity.this, "End of list view ", Toast.LENGTH_SHORT).show();
                    // pageforNewTweets(totalItemCount);
-                   populateTimeline();
+                   populateTimeline(false);
                 }
             }
         });
 
         client = TwitterApplication.getRestClient();//Singleton Client
-        populateTimeline();
+        populateTimeline(false);
     }
 
 
-    private void populateTimeline() {
-        if(lastQueryTime!=-1 && System.currentTimeMillis()-lastQueryTime < 5000){
+    private void populateTimeline(final boolean isRefresh) {
+        if(lastQueryTime !=-1 && System.currentTimeMillis() - lastQueryTime < 5000){
+            swipeContainer.setRefreshing(false);
+            Log.d("DEBUG", "Too early to request");
             return;
         }
+        Log.d("DEBUG", "Making request, minId:" + minIdSoFar +" maxId="+maxIdSoFar+" isRefresh="+isRefresh);
         lastQueryTime = System.currentTimeMillis();
         client.getHomeTimeline(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                Log.d("RESPONSE", response.toString());
-                List<Tweet> tweets = Tweet.fromJSONArray(response);
-               aTweets.addAll(tweets);
-                if (tweets.size() > 0) {
+                swipeContainer.setRefreshing(false);
+                List<Tweet> newTweets = Tweet.fromJSONArray(response);
+                if(isRefresh){
+                    tweets.addAll(0,newTweets);
+                    aTweets.notifyDataSetChanged();
+                }else {
+                    aTweets.addAll(newTweets);
+                }
+                if (newTweets.size() > 0) {
                     long minId = Long.MAX_VALUE;
-                    for (int i = 0; i < tweets.size(); i++) {
-                        Tweet tweeti = tweets.get(i);
+                    long maxId = Long.MIN_VALUE;
+                    for (int i = 0; i < newTweets.size(); i++) {
+                        Tweet tweeti = newTweets.get(i);
                         long tempId = tweeti.getUid();
                         if (tempId < minId) {
                             minId = tempId;
                         }
+                        if(tempId>maxId){
+                            maxId = tempId;
+                        }
                     }//for
                     minIdSoFar = minId - 1;
-                    Log.d("Aman",minIdSoFar+"");
+                    if(maxId>maxIdSoFar) {
+                        maxIdSoFar = maxId;
+                    }
                 }
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject erroeResponse) {
                 Log.d("RESPONSE", erroeResponse.toString());
+                swipeContainer.setRefreshing(false);
             }
-        }, count, minIdSoFar);
+        }, count, minIdSoFar, maxIdSoFar, isRefresh);
     }
 
 
@@ -137,8 +171,7 @@ public class TimelineActivity extends ActionBarActivity {
         if(resultCode != RESULT_OK){
             return;
         }else{
-            aTweets.clear();
-            populateTimeline();
+            populateTimeline(true);
         }
 
     }

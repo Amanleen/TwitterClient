@@ -32,6 +32,9 @@ public class Composetweet extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final int height = getResources().getDisplayMetrics().heightPixels;
+        final int width = getResources().getDisplayMetrics().widthPixels;
+        //getWindow().setLayout((int)(width*0.8), (int)(height*0.6));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_composetweet);
 
@@ -58,9 +61,8 @@ public class Composetweet extends ActionBarActivity {
                 Myprofile profile = new Myprofile();
                 try {
                     profile.setUsername(response.getString("name"));
-                    profile.setDisplayName(response.getString("screen_name"));
+                    profile.setDisplayName("@"+response.getString("screen_name"));
                     profile.setProfileUrl(response.getString("profile_image_url"));
-
                     tvUsername.setText(profile.getUsername());
                     tvScreenName.setText(profile.getDisplayName());
                     Picasso.with(getBaseContext()).load(profile.getProfileUrl()).into(ivProfileImg);

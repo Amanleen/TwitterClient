@@ -65,6 +65,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         //Sun Feb 22 01:47:26 +0000 2015
 //        format.setTimeZone(TimeZone.getTimeZone("GMT"));
 
+
         try {
             Date date = sf.parse(tweet.getCreatedAt());
             CharSequence createdTime = DateUtils.getRelativeTimeSpanString(
