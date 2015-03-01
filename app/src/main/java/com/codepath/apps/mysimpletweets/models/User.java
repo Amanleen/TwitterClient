@@ -3,6 +3,8 @@ package com.codepath.apps.mysimpletweets.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by aman on 2/20/15.
  */
@@ -22,13 +24,51 @@ import org.json.JSONObject;
  "profile_link_color": "0084B4" }
  */
 
-public class User {
+public class User implements Serializable {
     //list the attributes
 
     private String username;
     private long uid;
     private String screenName;
     private String profileImageUrl;
+
+    private String bannerUrl;
+
+    private int tweetsCount;
+    private int followersCount;
+    private int followingCount;
+
+    public String getBannerUrl() {
+        return bannerUrl;
+    }
+
+    public void setBannerUrl(String bannerUrl) {
+        this.bannerUrl = bannerUrl;
+    }
+
+    public int getTweetsCount() {
+        return tweetsCount;
+    }
+
+    public void setTweetsCount(int tweetsCount) {
+        this.tweetsCount = tweetsCount;
+    }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    public int getFollowingCount() {
+        return followingCount;
+    }
+
+    public void setFollowingCount(int followingCount) {
+        this.followingCount = followingCount;
+    }
 
     public String getUsername() {
         return username;
@@ -70,6 +110,14 @@ public class User {
             u.setUid(json.getLong("id"));
             u.setScreenName(json.getString("screen_name"));
             u.setProfileImageUrl(json.getString("profile_image_url"));
+            u.setFollowersCount(json.getInt("followers_count"));
+            u.setFollowingCount(json.getInt("friends_count"));
+            u.setTweetsCount(json.getInt("statuses_count"));
+            if(json.has("profile_background_image_url")) {
+                u.setBannerUrl(json.getString("profile_background_image_url"));
+            }else if(json.has("profile_banner_url")){
+                u.setBannerUrl(json.getString("profile_banner_url"));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

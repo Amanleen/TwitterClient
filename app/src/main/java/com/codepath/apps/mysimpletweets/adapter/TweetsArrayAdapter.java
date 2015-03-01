@@ -1,6 +1,7 @@
-package com.codepath.apps.mysimpletweets;
+package com.codepath.apps.mysimpletweets.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codepath.apps.mysimpletweets.Activity.MyprofileActivity;
+import com.codepath.apps.mysimpletweets.R;
 import com.codepath.apps.mysimpletweets.models.Tweet;
 import com.squareup.picasso.Picasso;
 
@@ -28,6 +31,7 @@ import java.util.TimeZone;
 public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
     String twitterFormat;
     SimpleDateFormat sf;
+    final Context contextFinal;
     public TweetsArrayAdapter(Context context, List<Tweet> objects) {
 
         super(context, 0, objects);
@@ -35,18 +39,19 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         // Important note. Only ENGLISH Locale works.
         sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
         sf.setLenient(true);
+        contextFinal = context;
     }
 
     //override and setup custom template
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Tweet tweet = getItem(position);
+        final Tweet tweet = getItem(position);
         if(convertView==null){
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_tweet,parent, false);
         }
         ImageView ivProileImage = (ImageView)convertView.findViewById(R.id.ivProfileImg);
-        TextView tvUsername = (TextView)convertView.findViewById(R.id.tvUsername);
+        final TextView tvUsername = (TextView)convertView.findViewById(R.id.tvUsername);
         TextView tvBody = (TextView)convertView.findViewById(R.id.tvBody);
         TextView tvRetweetCount = (TextView)convertView.findViewById(R.id.tvRetweetCount);
         TextView tvFavCount = (TextView)convertView.findViewById(R.id.tvFavCount);
@@ -57,6 +62,16 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         tvBody.setText(tweet.getBody());
         ivProileImage.setImageResource(android.R.color.transparent);//erase existing image recycle view
         Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProileImage);
+        
+        
+        ivProileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(contextFinal, MyprofileActivity.class);
+                i.putExtra(MyprofileActivity.MYPROFILE, tweet.getUser());
+                contextFinal.startActivity(i);
+            }
+        });
         tvRetweetCount.setText("" + tweet.getRetweetCount());
         tvFavCount.setText(""+tweet.getFavCount());
         tvDisplayname.setText("@"+tweet.getScreen_name());

@@ -15,6 +15,7 @@ import com.codepath.apps.mysimpletweets.R;
 import com.codepath.apps.mysimpletweets.TwitterApplication;
 import com.codepath.apps.mysimpletweets.TwitterClient;
 import com.codepath.apps.mysimpletweets.models.Myprofile;
+import com.codepath.apps.mysimpletweets.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
@@ -29,6 +30,10 @@ public class Composetweet extends ActionBarActivity {
     TextView tvUsername;
     TextView tvScreenName;
     ImageView ivProfileImg;
+    ImageView ivBannerImg;
+    
+    static String MYPROFILE="Amanleen Puri";
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +43,12 @@ public class Composetweet extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_composetweet);
 
+        Intent intent = getIntent();
+        final User user = (User)intent.getSerializableExtra(MYPROFILE);
+
+
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ic_follow_text);
+        getSupportActionBar().setIcon(R.drawable.ic_twitter_icon);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         client = TwitterApplication.getRestClient();//Singleton Client
@@ -47,7 +56,13 @@ public class Composetweet extends ActionBarActivity {
         tvUsername = (TextView)findViewById(R.id.tvUsername);
         tvScreenName = (TextView)findViewById(R.id.tvScreenName);
         ivProfileImg = (ImageView)findViewById(R.id.ivProfileImg);
-        setMyProfile();
+        ivBannerImg = (ImageView)findViewById(R.id.ivBannerImg);
+
+        tvUsername.setText(user.getUsername());
+        tvScreenName.setText(user.getScreenName());
+        Picasso.with(getBaseContext()).load(user.getProfileImageUrl()).into(ivProfileImg);
+        Picasso.with(getBaseContext()).load(user.getBannerUrl()).into(ivBannerImg);
+        //setMyProfile();
 
         etComposeTweet = (EditText)findViewById(R.id.etComposeTweet);
 

@@ -36,7 +36,6 @@ public class TwitterClient extends OAuthBaseClient {
 
 
     //METHOD == ENDPOINT
-
     //Hometimeline- Gets us the home timeline
 
 //    GET https://api.twitter.com/1.1/statuses/home_timeline.json
@@ -82,6 +81,34 @@ public class TwitterClient extends OAuthBaseClient {
     }
 
 
+    public void getMyTweetsProfile(AsyncHttpResponseHandler handler, int count, long maxId, long startId, boolean isRefresh, String displayName){
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+        //Specify the params
+        RequestParams params = new RequestParams();
+        params.put("count",count);
+        params.put("screen_name", displayName);
+        if(maxId!=-1 && !isRefresh) {
+            params.put("max_id", maxId);
+        }
+        if(isRefresh && startId!=-1){
+            params.put("since_id", startId);
+        }
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getMentionsTimeline(AsyncHttpResponseHandler handler, int count, long maxId, long startId, boolean isRefresh){
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        //Specify the params
+        RequestParams params = new RequestParams();
+        params.put("count",count);
+        if(maxId!=-1 && !isRefresh) {
+            params.put("max_id", maxId);
+        }
+        if(isRefresh && startId!=-1){
+            params.put("since_id", startId);
+        }
+        getClient().get(apiUrl, params, handler);
+    }
 
     //COMPOSE TWEET
 
