@@ -1,4 +1,29 @@
 # Twitter Client
+
+PART :2
+
+This is an Android demo application for displaying the recent feed from Twitter. See the [Twitter with Fragments](http://courses.codepath.com/courses/intro_to_android/week/4#!assignment) for details.
+
+Time spent: 24 hours spent in total
+
+Completed User stories:
+* [x] Required:User can switch between Timeline and Mention views using tabs.
+* [x] Required:User can view their home timeline tweets.
+* [x] Required:User can view the recent mentions of their username.
+* [x] Required:User can navigate to view their own profile
+* [x] Required:User can see picture, tagline, number of followers, number of following, and tweets on their profile.
+* [x] Required:User can click on the profile image in any tweet to see another user's profile.
+* [x] Required:User can see picture, tagline, number of followers, number of following, and tweets of clicked user.
+* [x] Required:Profile view includes user's timeline
+* [x] Required:User can infinitely paginate any of these timelines (home, mentions, user) by scrolling to the bottom
+
+Walkthrough of all user stories:
+
+![Video Walkthrough](Twitter_Client_Extended.gif)
+
+
+PART :1
+
 This is an Android demo application for displaying the recent feed from Twitter. See the [Simple Twitter Client](http://courses.codepath.com/courses/intro_to_android/week/3#!assignment) for details.
 
 Time spent: 24 hours spent in total
